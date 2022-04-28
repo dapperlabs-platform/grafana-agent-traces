@@ -1,3 +1,0 @@
-# grafana-agent-traces
-
--
