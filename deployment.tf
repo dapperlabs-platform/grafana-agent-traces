@@ -1,4 +1,4 @@
-resource "kubernetes_deployment" "tempo" {
+resource "kubernetes_deployment" "grafana-agent" {
   metadata {
     name      = local.app_name
     labels    = local.commonLabels
@@ -21,12 +21,12 @@ resource "kubernetes_deployment" "tempo" {
     }
 
     spec {
-      service_account_name             = kubernetes_service_account.tempo.metadata.0.name
+      service_account_name             = kubernetes_service_account.grafana-agent.metadata.0.name
       termination_grace_period_seconds = 300
       node_selector                    = var.deployment_node_selector
 
       container {
-        image = "${var.grafana_tempo_image.base}:${var.grafana_tempo_image.version}"
+        image = "${var.grafana-agent.base}:${var.grafana-agent.version}"
         name = "agent"
         image_pull_policy = "IfNotPresent"
         lifecycle {
@@ -96,12 +96,12 @@ resource "kubernetes_deployment" "tempo" {
         }
         resources {
             limits = {
-                cpu = var.grafana_tempo_resources.limits.cpu
-                memory = var.grafana_tempo_resources.limits.memory
+                cpu = var.grafana-agent-resources.limits.cpu
+                memory = var.grafana-agent-resources.limits.memory
             }
             requests = {
-                cpu = var.grafana_tempo_resources.requests.cpu
-                memory = var.grafana_tempo_resources.requests.memory
+                cpu = var.grafana-agent-resources.requests.cpu
+                memory = var.grafana-agent-resources.requests.memory
             }
         }
         liveness_probe {

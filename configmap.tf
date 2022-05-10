@@ -1,4 +1,4 @@
-resource "kubernetes_config_map" "tempo" {
+resource "kubernetes_config_map" "grafana-agent" {
   metadata {
     name      = local.app_name
     labels    = local.commonLabels

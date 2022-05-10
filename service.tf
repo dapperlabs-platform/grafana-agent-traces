@@ -1,4 +1,4 @@
-resource "kubernetes_service" "tempo" {
+resource "kubernetes_service" "grafana-agent" {
   metadata {
     name      = local.app_name
     labels    = local.commonLabels
@@ -62,7 +62,5 @@ resource "kubernetes_service" "tempo" {
       target_port = 55678
       protocol    = TCP
     }
-
-
   }
 }

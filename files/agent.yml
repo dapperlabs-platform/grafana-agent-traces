@@ -6,7 +6,7 @@ tempo:
         endpoint: tempo-us-central1.grafana.net:443
         basic_auth:
             # TODO Update me
-            username: <tempo-user>
+            username: <grafana-agent-user>
             password_file: /run/secrets/grafana/password
         batch:
             send_batch_size: 1000

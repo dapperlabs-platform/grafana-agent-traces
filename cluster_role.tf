@@ -1,4 +1,4 @@
-resource "kubernetes_cluster_role" "tempo" {
+resource "kubernetes_cluster_role" "grafana-agent" {
   metadata {
     name   = local.app_name
     labels = local.commonLabels

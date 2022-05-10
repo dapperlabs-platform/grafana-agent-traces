@@ -21,8 +21,8 @@ variable "prometheus_scrape" {
   default     = true
 }
 
-variable "grafana_tempo_image" {
-  description = "Grafana Tempo container image"
+variable "grafana-agent-image" {
+  description = "Grafana agent container image"
   type = object({
     base    = string
     version = string
@@ -33,8 +33,8 @@ variable "grafana_tempo_image" {
   }
 }
 
-variable "grafana_tempo_resources" {
-  description = "Grafana Tempo container resource configuration"
+variable "grafana-agent-resources" {
+  description = "Grafana agent container resource configuration"
   type = object({
     limits = object({
       cpu    = string
