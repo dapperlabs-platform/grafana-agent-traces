@@ -21,6 +21,56 @@ variable "prometheus_scrape" {
   default     = true
 }
 
+variable "enable-agent-http-metrics" {
+  description = "Enable Agent http metrics service"
+  type        = bool
+  default     = false
+}
+
+variable "http-agent-metrics" {
+  description = "Agent http metrics port"
+  type = object({
+    port = object({
+      name        = string
+      port        = number
+      target_port = number
+    })
+  })
+  default = {
+    port = {
+      name        = "agent-http-metrics"
+      port        = 8080
+      target_port = 8080
+    }
+  }
+}
+
+variable "enable-jaeger-grpc" {
+  description = "Enable Jaeger grpc metrics service"
+  type        = bool
+  default     = false
+}
+
+variable "jaeger-grpc" {
+  description = "jaeger-grpc  metrics port"
+  type = object({
+    port = object({
+      name        = string
+      port        = number
+      target_port = number
+      protocol    = string
+    })
+  })
+  default = {
+    port = {
+      name        = "agent-http-metrics"
+      port        = 8080
+      target_port = 8080
+      protocol    = TCP
+    }
+  }
+}
+
 variable "grafana-agent-image" {
   description = "Grafana agent container image"
   type = object({
