@@ -1,68 +1,55 @@
 server:
-    http_listen_port: 8080
-    log_level: info
+  http_listen_port: 8080
+  log_level: info
 tempo:
-    push_config:
-        endpoint: tempo-us-central1.grafana.net:443
-        basic_auth:
-            # TODO Update me
-            username: <grafana-agent-user>
-            password_file: /run/secrets/grafana/password
-        batch:
-            send_batch_size: 1000
-            timeout: 5s
-        retry_on_failure:
-            enabled: false
-    receivers:
-        jaeger:
-            protocols:
-                grpc: null
-                thrift_binary: null
-                thrift_compact: null
-                thrift_http: null
-            remote_sampling:
-                insecure: true
-                strategy_file: /etc/agent/strategies.json
-        opencensus: null
-        otlp:
-            protocols:
-                grpc: null
-                http: null
-        zipkin: null
-    scrape_configs:
-      - bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-        job_name: kubernetes-pods
-        kubernetes_sd_configs:
-          - role: pod
-        relabel_configs:
-        - action: replace
-          source_labels:
-          - __meta_kubernetes_pod_label_env
-          target_label: env
-        - action: replace
-          source_labels:
-          - __meta_kubernetes_pod_label_app
-          target_label: app
-        - action: replace
-          source_labels:
-          - __meta_kubernetes_pod_label_version
-          target_label: version
-        - action: replace
-          source_labels:
-          - __meta_kubernetes_pod_label_owner
-          target_label: owner
-        - action: replace
-          source_labels:
-            - __meta_kubernetes_namespace
-          target_label: namespace
-        - action: replace
-          source_labels:
-            - __meta_kubernetes_pod_name
-          target_label: pod
-        - action: replace
-          source_labels:
-            - __meta_kubernetes_pod_container_name
-          target_label: container
-        tls_config:
-            ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-            insecure_skip_verify: false
+  configs:
+    - name: default
+      remote_write: ${jsonencode(concat([{
+        endpoint = TEMPO_ENDPOINT,
+        basic_auth = (TEMPO_USERNAME != "") ? { username = TEMPO_USERNAME, password = "$${TEMPO_PASSWORD}" } : {},
+        retry_on_failure = { enabled = TEMPO_ENDPOINT_RETRY_ON_FAILURE}
+        protocol = TEMPO_ENDPOINT_PROTOCOL
+      }], (TEMPO_ADDITIONAL_ENDPOINTS != []) ? TEMPO_ADDITIONAL_ENDPOINTS : []))}
+      %{~ if jsonencode(TEMPO_ATTRIBUTES) != "{}" ~}
+      attributes: ${jsonencode(TEMPO_ATTRIBUTES)}
+      %{~ endif}
+      batch:
+          send_batch_size: 1000
+          timeout: 5s
+      receivers:
+          jaeger:
+              protocols:
+                  grpc: null
+                  thrift_binary: null
+                  thrift_compact: null
+                  thrift_http: null
+              remote_sampling:
+                  insecure: true
+                  strategy_file: /etc/agent/strategies.json
+          opencensus: null
+          otlp:
+              protocols:
+                  grpc: null
+                  http: null
+          zipkin: null
+      scrape_configs:
+        - bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          job_name: kubernetes-pods
+          kubernetes_sd_configs:
+            - role: pod
+          relabel_configs:
+            - action: replace
+              source_labels:
+                - __meta_kubernetes_namespace
+              target_label: namespace
+            - action: replace
+              source_labels:
+                - __meta_kubernetes_pod_name
+              target_label: pod
+            - action: replace
+              source_labels:
+                - __meta_kubernetes_pod_container_name
+              target_label: container
+          tls_config:
+              ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              insecure_skip_verify: false

@@ -3,6 +3,51 @@ variable "namespace" {
   type        = string
 }
 
+variable "tempo_endpoint" {
+  description = "Tempo Endpoint"
+  type        = string
+}
+
+variable "tempo_endpoint_headers" {
+  description = "Additional headers to send for default endpoint"
+  type        = map(any)
+  default = false
+}
+
+variable "tempo_endpoint_retry_on_failure" {
+  description = "Retry on Failure"
+  type        = bool
+  default = false
+}
+
+variable "tempo_endpoint_protocol" {
+  description = "Protocol to use when sending requests to the forst endpoint"
+  type        = string
+  default = "grpc"
+}
+
+variable "tempo_username" {
+  description = "Tempo username"
+  type        = string
+}
+
+variable "tempo_password" {
+  description = "Tempo password"
+  type        = string
+}
+
+variable "tempo_additional_endpoints" {
+  description = "Tempo additional endpoints"
+  type        = list(any)
+  default = []
+}
+
+variable "tempo_attributes" {
+  type        = map(any)
+  default     = {}
+  description = "Attributes to set for endpoints."
+}
+
 variable "replicas" {
   description = "Number of deployment replicas"
   type = object({
