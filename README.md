@@ -10,12 +10,7 @@ This terraform modules deploys grafana agent on any kubernetes cluster and expos
 
 ## How to use this module?
 
-```hcl
-module "confluent-kafka-cluster" {
-  source                            = "https://github.com/dapperlabs-platform/terraform-confluent-kafka-cluster?ref=tag"
-  
-}
-```
+
 
 ## Resources created
 
