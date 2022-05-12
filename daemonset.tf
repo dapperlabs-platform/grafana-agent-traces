@@ -1,4 +1,4 @@
-resource "kubernetes_deployment" "grafana-agent" {
+resource "kubernetes_daemonset" "grafana-agent" {
   metadata {
     name      = local.app_name
     labels    = local.commonLabels
