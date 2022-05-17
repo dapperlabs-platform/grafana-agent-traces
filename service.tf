@@ -18,7 +18,7 @@ resource "kubernetes_service" "grafana-agent" {
       name        = "jaeger-grpc"
       port        = 14250
       target_port = 14250
-      protocol    = TCP
+      protocol    = "TCP"
     }
 
   }

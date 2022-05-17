@@ -4,7 +4,7 @@ resource "kubernetes_cluster_role" "grafana-agent" {
     labels = local.commonLabels
   }
 
-  rules {
+  rule {
     api_groups        = [""]
     resources         = ["nodes", "nodes/proxy", "services", "endpoints", "pods"]
     verbs             = ["get", "list", "watch"]

@@ -11,19 +11,19 @@ variable "tempo_endpoint" {
 variable "tempo_endpoint_headers" {
   description = "Additional headers to send for default endpoint"
   type        = map(any)
-  default = false
+  default     = {}
 }
 
 variable "tempo_endpoint_retry_on_failure" {
   description = "Retry on Failure"
   type        = bool
-  default = false
+  default     = false
 }
 
 variable "tempo_endpoint_protocol" {
   description = "Protocol to use when sending requests to the forst endpoint"
   type        = string
-  default = "grpc"
+  default     = "grpc"
 }
 
 variable "tempo_username" {
@@ -39,25 +39,13 @@ variable "tempo_password" {
 variable "tempo_additional_endpoints" {
   description = "Tempo additional endpoints"
   type        = list(any)
-  default = []
+  default     = []
 }
 
 variable "tempo_attributes" {
   type        = map(any)
   default     = {}
   description = "Attributes to set for endpoints."
-}
-
-variable "replicas" {
-  description = "Number of deployment replicas"
-  type = object({
-    max = number
-    min = number
-  })
-  default = {
-    max = 24
-    min = 3
-  }
 }
 
 variable "prometheus_scrape" {
@@ -111,7 +99,7 @@ variable "jaeger-grpc" {
       name        = "agent-http-metrics"
       port        = 8080
       target_port = 8080
-      protocol    = TCP
+      protocol    = "TCP"
     }
   }
 }
@@ -149,5 +137,13 @@ variable "grafana-agent-resources" {
       cpu    = "1"
       memory = "512M"
     }
+  }
+}
+
+variable "deployment_node_selector" {
+  description = "Map of label names and values to assign the podspec's nodeSelector property"
+  type        = map(string)
+  default = {
+    "ops.dapperlabs.com/preferred-namespace" = "sre"
   }
 }
