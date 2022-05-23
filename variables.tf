@@ -145,5 +145,6 @@ variable "deployment_node_selector" {
   type        = map(string)
   default = {
     "kubernetes.io/os" = "linux"
+    "ops.dapperlabs.com/preferred-namespace" = "sre"
   }
 }
