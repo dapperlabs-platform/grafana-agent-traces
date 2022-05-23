@@ -144,6 +144,6 @@ variable "deployment_node_selector" {
   description = "Map of label names and values to assign the podspec's nodeSelector property"
   type        = map(string)
   default = {
-    "ops.dapperlabs.com/preferred-namespace" = "sre"
+    "kubernetes.io/os" = "linux"
   }
 }
