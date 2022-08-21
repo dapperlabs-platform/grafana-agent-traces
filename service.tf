@@ -1,25 +1,20 @@
-resource "kubernetes_service" "grafana-agent" {
+resource "kubernetes_service" "agent" {
   metadata {
-    name      = local.app_name
-    labels    = local.commonLabels
-    namespace = data.kubernetes_namespace.ns.metadata.0.name
+    name      = var.name
+    labels    = local.labels
+    namespace = var.namespace
   }
 
   spec {
-    selector = local.selectorLabels
+    selector = local.labels
 
-    port {
-      name        = "agent-http-metrics"
-      port        = 8080
-      target_port = 8080
+    dynamic "port" {
+      for_each = local.ports
+      content {
+        name        = port.key
+        port        = port.value
+        target_port = port.value
+      }
     }
-
-    port {
-      name        = "jaeger-grpc"
-      port        = 14250
-      target_port = 14250
-      protocol    = "TCP"
-    }
-
   }
 }
