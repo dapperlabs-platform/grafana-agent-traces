@@ -1,20 +1,64 @@
-resource "kubernetes_config_map" "grafana-agent" {
-  metadata {
-    name      = local.app_name
-    labels    = local.commonLabels
-    namespace = data.kubernetes_namespace.ns.metadata.0.name
+resource "kubernetes_manifest" "agent" {
+  manifest = {
+    apiVersion = "v1"
+    kind       = "ConfigMap"
+    metadata = {
+      name      = var.name
+      namespace = var.namespace
+    }
+    data = {
+      "agent.yaml" = yamlencode({
+        server = {
+          log_level  = "info"
+          log_format = "json"
+        }
+        traces = {
+          configs = [{
+            name = "default"
+            attributes = {
+              actions = [{
+                key    = "env"
+                action = "upsert"
+                value  = var.environment
+                }, {
+                key    = "project"
+                action = "upsert"
+                value  = var.project
+              }]
+            }
+            batch = {
+              send_batch_size = 1000
+              timeout         = "5s"
+            }
+            remote_write = concat([{
+              endpoint = var.tempo_endpoint
+              basic_auth = {
+                username = var.tempo_username
+                password_file : "/run/secrets/grafana/${var.tempo_api_key_secret.key}"
+              }
+              retry_on_failure = {
+                enabled : true
+              }
+            }], var.additional_remote_writes)
+            receivers = {
+              otlp = {
+                protocols = {
+                  grpc = {
+                    include_metadata : true
+                  }
+                }
+              }
+            }
+            automatic_logging = {
+              backend = "stdout"
+              roots : true
+              overrides = {
+                trace_id_key : "trace_id"
+              }
+            }
+          }]
+        }
+      })
+    }
   }
-
-  data = {
-    "agent.yml" = templatefile("${path.module}/files/agent.yml", {
-      TEMPO_USERNAME                  = var.tempo_username
-      TEMPO_ENDPOINT                  = var.tempo_endpoint
-      TEMPO_ATTRIBUTES                = var.tempo_attributes
-      TEMPO_ENDPOINT_RETRY_ON_FAILURE = var.tempo_endpoint_retry_on_failure
-      TEMPO_ENDPOINT_HEADERS          = var.tempo_endpoint_headers
-      TEMPO_ENDPOINT_PROTOCOL         = var.tempo_endpoint_protocol
-      TEMPO_ADDITIONAL_ENDPOINTS      = var.tempo_additional_endpoints
-    })
-    "strategies.json" = "{\"default_strategy\": {\"param\": 0.001, \"type\": \"probabilistic\"}}"
-  }
-} 
+}

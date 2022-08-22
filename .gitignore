@@ -2,3 +2,4 @@ local.tfvars
 *.terraform/
 *.hcl
 *.tfstate
+test
