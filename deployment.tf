@@ -83,7 +83,7 @@ resource "kubernetes_deployment_v1" "agent" {
 
           resources {
             limits   = var.deployment_resources.limits
-            requests = var.deployment_resources.limits
+            requests = var.deployment_resources.requests
           }
 
           volume_mount {
