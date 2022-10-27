@@ -70,7 +70,7 @@ variable "grafana_agent_image" {
   })
   default = {
     base    = "grafana/agent"
-    version = "v0.24.1"
+    version = "v0.28.0"
   }
 }
 
