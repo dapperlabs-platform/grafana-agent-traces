@@ -1,4 +1,5 @@
 resource "kubernetes_deployment_v1" "agent" {
+  depends_on = [kubernetes_manifest.agent]
   metadata {
     name      = var.name
     labels    = local.labels
