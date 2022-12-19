@@ -113,3 +113,27 @@ variable "tempo_username" {
   description = "Tempo username"
   type        = string
 }
+
+variable "tempo_batch_send_batch_size" {
+  description = "Agent config send batch size"
+  type        = number
+  default     = 1000
+}
+
+variable "tempo_batch_timeout" {
+  description = "Agent config batch send timeout"
+  type        = string
+  default     = "5s"
+}
+
+variable "tempo_server_log_level" {
+  description = "Agent config log level"
+  type        = string
+  default     = "info"
+}
+
+variable "tempo_server_log_format" {
+  description = "Agent config log format"
+  type        = string
+  default     = "json"
+}
