@@ -9,8 +9,8 @@ resource "kubernetes_manifest" "agent" {
     data = {
       "agent.yaml" = yamlencode({
         server = {
-          log_level  = "info"
-          log_format = "json"
+          log_level  = var.tempo_server_log_level
+          log_format = var.tempo_server_log_format
         }
         traces = {
           configs = [{
@@ -27,8 +27,8 @@ resource "kubernetes_manifest" "agent" {
               }]
             }
             batch = {
-              send_batch_size = 1000
-              timeout         = "5s"
+              send_batch_size = var.tempo_batch_send_batch_size
+              timeout         = var.tempo_batch_timeout
             }
             remote_write = concat([{
               endpoint = var.tempo_endpoint
