@@ -58,7 +58,7 @@ variable "deployment_env_from_field_ref" {
 }
 
 variable "environment" {
-  description = "Value of the `env` span tag, e.g. development, staging or production"
+  description = "Value of the `env` resource tag, e.g. development, staging or production"
   type        = string
 }
 
