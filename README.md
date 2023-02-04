@@ -10,7 +10,7 @@ This module provisions a Grafana Agent K8S deployment with opinionanted configur
 
 ```hcl
 module "agent" {
-  source         = "github.com/dapperlabs-platform/grafana-agent-traces?ref=<latest-tag>"
+  source         = "github.com/dapperlabs-platform/terraform-grafana-agent-traces?ref=<latest-tag>"
   namespace      = "sre"
   project        = "deathstar"
   environment    = "production"
