@@ -1,3 +1,9 @@
+locals {
+  k8s_service_discovery_additional_relabel_configs = [
+    { target_label : "project", "replacement" : var.project },
+    { target_label : "env", "replacement" : var.environment },
+  ]
+}
 resource "kubernetes_manifest" "agent" {
   manifest = {
     apiVersion = "v1"
@@ -15,17 +21,21 @@ resource "kubernetes_manifest" "agent" {
         traces = {
           configs = [{
             name = "default"
-            attributes = {
-              actions = [{
-                key    = "env"
-                action = "upsert"
-                value  = var.environment
-                }, {
-                key    = "project"
-                action = "upsert"
-                value  = var.project
-              }]
-            }
+            scrape_configs = [{
+              bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token",
+              job_name          = "kubernetes-pods",
+              kubernetes_sd_configs : [{ role : "pod" }],
+              relabel_configs : concat([
+                { source_labels : ["__meta_kubernetes_namespace"], target_label : "namespace" },
+                { source_labels : ["__meta_kubernetes_pod_label_app"], target_label : "app" },
+                { source_labels : ["__meta_kubernetes_pod_name"], target_label : "pod" },
+                { source_labels : ["__meta_kubernetes_pod_container_name"], target_label : "container" },
+              ], local.k8s_service_discovery_additional_relabel_configs)
+              tls_config : {
+                ca_file : "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+                insecure_skip_verify : false
+              }
+            }]
             batch = {
               send_batch_size = var.tempo_batch_send_batch_size
               timeout         = var.tempo_batch_timeout
